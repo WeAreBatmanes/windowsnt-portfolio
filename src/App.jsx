@@ -1,143 +1,24 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Monitor, FileText, Music2, Calculator, Trophy, FolderOpen, Volume2, User, Mail, Globe, HardDrive, HelpCircle } from 'lucide-react';
-import iconComputer from "./assets/icons/MyPC.png";
 import iconDocument from "./assets/icons/Resume.png";
-import iconWinamp from "./assets/icons/Winamp.png";
 import iconCalculator from "./assets/icons/Calc.png";
 import iconSolitaire from "./assets/icons/Solitaire.png";
-import iconFolder from "./assets/icons/Projects.png";
 import iconInternet from "./assets/icons/Internet.png";
 import icondos from "./assets/icons/dos.png";
 import iconcloud from "./assets/icons/cloud.png";
 
+import { CONFIG } from './config';
+
 const DESKTOP_BG = '#008080';
-const BUCKET_BASE_URL = 'https://pub-ebff3b7bf9d8453fb0a174b49799e120.r2.dev';
-const PLAYLIST_URL = `${BUCKET_BASE_URL}/playlist.m3u`;
-
-const songsSeed = [
-  { title: 'Raindrops', artist: 'Matias Menarguez', src: `${BUCKET_BASE_URL}/Matias%20Menarguez%20-%20Raindrops.mp3` },
-  { title: 'Hacking', artist: 'Matias Menarguez', src: `${BUCKET_BASE_URL}/Matias%20Menarguez%20-%20Hacking.mp3` },
-  { title: 'Away', artist: 'Matias Menarguez', src: `${BUCKET_BASE_URL}/Matias%20Menarguez%20-%20Away.mp3` },
-  { title: 'Overcome', artist: 'Matias Menarguez', src: `${BUCKET_BASE_URL}/Matias%20Menarguez%20-%20Overcome.mp3` },
-  { title: 'Farewell', artist: 'Matias Menarguez', src: `${BUCKET_BASE_URL}/Matias%20Menarguez%20-%20Farewell.mp3` },
-  { title: 'Layers', artist: 'Matias Menarguez', src: `${BUCKET_BASE_URL}/Matias%20Menarguez%20-%20Layers.mp3` },
-  { title: 'Red', artist: 'Matias Menarguez', src: `${BUCKET_BASE_URL}/Matias%20Menarguez%20-%20Red.mp3` },
-];
-
-const resumeSeed = {
-  name: 'Matias Sebastian Menarguez Insua',
-  title: 'IT Professional | Systems Administration | Security Compliance | Risk Management',
-  location: 'Mt. Olive, New Jersey, USA',
-  phone: '+1 (551) 235-7682',
-  email: 'matumenar@gmail.com',
-  website: 'www.linkedin.com/in/matiasmenarguez84',
-  summary:
-    'Results-oriented IT professional with over a decade of experience in system administration, security compliance, and risk management across enterprise environments. Proven success delivering robust technical support, enforcing GRC controls, and automating infrastructure tasks in hybrid environments. Adept at audit preparation, identity and access governance, and technical troubleshooting. Seeking to leverage hands-on experience and enterprise insight in an IT role.',
-  experience: [
-    {
-      role: 'Freelance IT Consultant',
-      company: 'USA / Argentina',
-      years: '2013 – Present',
-      bullets: [
-        'Configured and secured Linux, MacOS, and Windows systems for SMB clients.',
-        'Deployed and maintained WordPress websites with SEO, performance, and security optimizations.',
-        'Automated backup, patching, and user access tasks via scripting.',
-        'Provided support for remote work environments (VPN, router/firewall settings).',
-        'Networking configuration and support for small companies.',
-        'Advised on basic risk controls, GDPR-aligned practices, and asset documentation.',
-        'Developed a Unity-based 2D adventure game showcasing modern platform fluency.',
-      ],
-    },
-    {
-      role: 'Enterprise Content Senior Administrator',
-      company: 'Thomson Reuters',
-      years: '2012 – 2013',
-      bullets: [
-        'Supported enterprise-level applications in a Unix/Solaris production environment.',
-        'Administered Oracle/PLSQL scripts and databases, resolved real-time incidents.',
-        'Managed backup routines and job automation using Tivoli and TSM.',
-      ],
-    },
-    {
-      role: 'S&RM Governance Analyst',
-      company: 'IBM Global Delivery Center',
-      years: '2010 – 2012',
-      bullets: [
-        'Executed system access audits, compliance revalidation and control documentation.',
-        'Ensured adherence to IT governance for Ameriprise Financial’s infrastructure.',
-        'Coordinated multi-region teams in incident response.',
-      ],
-    },
-    {
-      role: 'Team Coordinator',
-      company: 'IBM Global Delivery Center',
-      years: '2009 – 2010',
-      bullets: [
-        'Supervised 30+ administrators handling Windows/Unix environments.',
-        'Delegated workloads, trained new hires, and upheld audit readiness.',
-      ],
-    },
-    {
-      role: 'Windows & Unix ID Administrator',
-      company: 'IBM Global Delivery Center',
-      years: '2006 – 2009',
-      bullets: [
-        'Managed Active Directory and Unix account lifecycle (create/update/revoke).',
-        'Automated admin processes via Unix shell scripting.',
-        'Troubleshooting in Windows and Unix systems.',
-        'Supported enterprise clients including Phillip Morris, Novartis, and Ameriprise.',
-      ],
-    },
-  ],
-  skills: [
-    'Risk Management & Governance',
-    'SOX / GDPR basics',
-    'Linux (Ubuntu, Red Hat, AIX)',
-    'Windows Server (2003–2019)',
-    'Active Directory',
-    'IAM',
-    'AWS Cloud Practitioner',
-    'VMware',
-    'Hyper-V',
-    'Bash',
-    'PowerShell',
-    'TCP/IP',
-    'VPNs',
-    'DNS',
-    'DHCP',
-    'Firewall Configuration',
-    'Tivoli Workload Scheduler',
-    'Veritas Cluster',
-    'TSM',
-    'Oracle',
-    'PL/SQL',
-    'HP SM',
-    'Technical Documentation',
-    'Training & Onboarding',
-    'Access Lifecycle Management',
-  ],
-  certifications: [
-    'AWS Cloud Practitioner Essentials – Amazon Web Services',
-    'Unix AIX Q1313',
-    'Windows MOC 2273',
-    'IT Essentials (Cisco)',
-    'SSCP – Systems Security Certified Practitioner (in progress)',
-  ],
-  education: 'Escuela de Música de Buenos Aires — Professional Musician, 2006 | Colegio Leonardo Da Vinci — Bachelor\'s in Business Administration, 2002',
-  languages: ['Spanish: Native', 'English: Fluent'],
-};
 
 const desktopIcons = [
   { id: 'resume', label: 'Resume.doc', icon: iconDocument, x: 24, y: 28, scale: 1 },
-  { id: 'winamp', label: 'MatiAmp', icon: iconWinamp, x: 24, y: 112, scale: 2 },
+  { id: 'certifications', label: 'Certifications', icon: iconcloud, x: 24, y: 112, scale: 2 },
   { id: 'calculator', label: 'Calculator', icon: iconCalculator, x: 24, y: 196, scale: 2 },
   { id: 'solitaire', label: 'Solitaire', icon: iconSolitaire, x: 24, y: 280, scale: 1 },
-  { id: 'portfolio', label: 'My Computer', icon: iconComputer, x: 24, y: 364, scale: 1 },
-  { id: 'projects', label: 'Projects', icon: iconFolder, x: 24, y: 448, scale: 1 },
-  { id: 'internet', label: 'Internet Explorer', icon: iconInternet, x: 24, y: 532, scale: 1 },
-  { id: 'dos', label: 'MS-DOS', icon: icondos, x: 24, y: 616, scale: 1 },
-  { id: 'cloud', label: 'Cloud Control', icon: iconcloud, x: 24, y: 700, scale: 2 },
+  { id: 'internet', label: 'Internet Explorer', icon: iconInternet, x: 24, y: 364, scale: 1 },
+  { id: 'dos', label: 'Command Prompt', icon: icondos, x: 24, y: 448, scale: 1 },
 ];
 
 function cn(...classes) {
@@ -311,12 +192,8 @@ function BootScreen({ onComplete }) {
     <div className="h-screen w-screen bg-black text-white flex flex-col items-center justify-center font-mono">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-[720px] max-w-[92vw]">
         <div className="text-5xl font-bold tracking-tight mb-4">
-          <span className="text-red-500">M</span>
-          <span className="text-green-500">at</span>
-          <span className="text-blue-400">ia</span>
-          <span className="text-yellow-400">s</span>
-          <span className="ml-4 text-white">Menarguez</span>
-          <span className="align-super text-2xl ml-1">OS</span>
+          <span className="text-blue-600">Windows</span>
+          <span className="ml-4 text-white">NT Server</span>
         </div>
         <div className="border border-neutral-500 p-1 bg-black">
           <motion.div
@@ -327,10 +204,10 @@ function BootScreen({ onComplete }) {
           />
         </div>
         <div className="mt-8 text-sm text-neutral-300 leading-6">
-          <div>Starting Matias Menarguez OS…</div>
-          <div>Loading some simple but rather cool stuff…</div>
-          <div>Initializing MatiAmp</div>
-          <div>Mounting Resume.doc…</div>
+          <div>Starting Windows NT Server…</div>
+          <div>Loading kernel and system modules…</div>
+          <div>Initializing Network Configuration…</div>
+          <div>Mounting File Systems…</div>
         </div>
       </motion.div>
     </div>
@@ -339,33 +216,46 @@ function BootScreen({ onComplete }) {
 
 function ResumeDoc({ resume }) {
   return (
-    <div className="bg-white border border-black h-[70vh] text-black p-8 text-[14px] leading-6 shadow-inner overflow-auto">
-      <div className="text-center border-b border-neutral-300 pb-4 mb-6">
-        <h1 className="text-3xl font-bold">{resume.name}</h1>
-        <p className="text-base">{resume.title}</p>
-        <p className="text-sm">{resume.location} • {resume.phone} • {resume.email} • {resume.website}</p>
+    <div className="bg-white border border-black h-[70vh] text-black p-8 shadow-inner overflow-auto font-sans">
+      {/* Header */}
+      <div className="text-center border-b-2 border-black pb-6 mb-8">
+        <h1 className="text-4xl font-bold tracking-tighter uppercase">{resume.name} "{resume.nickname}" {resume.surname}</h1>
+        <p className="text-lg font-bold text-neutral-700 mt-1">{resume.title}</p>
+        <div className="flex justify-center gap-4 mt-3 text-sm">
+          <span>{resume.email}</span>
+          <span className="text-neutral-300">|</span>
+          <a href={resume.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline font-bold">LinkedIn Profile</a>
+          <span className="text-neutral-300">|</span>
+          <a href={resume.certifications[0]?.link} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline font-bold">Certification Badges</a>
+          <span className="text-neutral-300">|</span>
+          <a href={resume.cvPath} download className="text-blue-800 underline font-bold">Download PDF</a>
+        </div>
       </div>
 
-      <section className="mb-6">
-        <h2 className="font-bold text-lg uppercase mb-2">Profile</h2>
-        <p>{resume.summary}</p>
-      </section>
-
-      <section className="mb-6">
-        <h2 className="font-bold text-lg uppercase mb-2">Experience</h2>
-        <div className="space-y-4">
-          {resume.experience.map((item, i) => (
-            <div key={i}>
-              <div className="flex justify-between gap-4">
+      {/* Experience Section */}
+      <section className="mb-10">
+        <div className="bg-[#000080] text-white px-3 py-1 text-sm font-bold uppercase mb-4 tracking-widest">
+          Professional Experience
+        </div>
+        <div className="space-y-8">
+          {resume.experience && resume.experience.map((exp, i) => (
+            <div key={i} className="border-l-2 border-neutral-200 pl-4 relative">
+              <div className="absolute w-3 h-3 bg-[#000080] -left-[7px] top-1.5 border border-white"></div>
+              <div className="flex justify-between items-start mb-2">
                 <div>
-                  <div className="font-bold">{item.role}</div>
-                  <div>{item.company}</div>
+                  <h3 className="font-extrabold text-base uppercase">{exp.role}</h3>
+                  <p className="text-sm font-bold text-neutral-600">{exp.company}</p>
                 </div>
-                <div className="shrink-0">{item.years}</div>
+                <span className="bg-[#efefef] px-2 py-0.5 border border-neutral-300 text-[11px] font-mono font-bold">
+                  {exp.years}
+                </span>
               </div>
-              <ul className="list-disc pl-6 mt-1">
-                {item.bullets.map((bullet, j) => (
-                  <li key={j}>{bullet}</li>
+              <ul className="list-none space-y-2">
+                {exp.bullets && exp.bullets.map((bullet, j) => (
+                  <li key={j} className="text-sm leading-relaxed flex gap-2">
+                    <span className="text-[#000080] font-bold">•</span>
+                    {bullet}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -373,162 +263,54 @@ function ResumeDoc({ resume }) {
         </div>
       </section>
 
-      <section className="mb-6">
-        <h2 className="font-bold text-lg uppercase mb-2">Skills</h2>
-        <p>{resume.skills.join(' • ')}</p>
-      </section>
-
-      <section className="mb-6">
-        <h2 className="font-bold text-lg uppercase mb-2">Certifications</h2>
-        <ul className="list-disc pl-6 mt-1">
-          {resume.certifications.map((item, i) => (
-            <li key={i}>{item}</li>
+      {/* Skills Section */}
+      <section className="mb-10">
+        <div className="bg-[#000080] text-white px-3 py-1 text-sm font-bold uppercase mb-4 tracking-widest">
+          Technical Skills & Stack
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {resume.skills && resume.skills.map((skill, i) => (
+            <span key={i} className="border border-neutral-800 px-3 py-1 text-xs font-bold bg-[#f3f3f3] hover:bg-[#000080] hover:text-white transition-colors cursor-default">
+              {skill}
+            </span>
           ))}
-        </ul>
+        </div>
       </section>
 
-      <section className="mb-6">
-        <h2 className="font-bold text-lg uppercase mb-2">Education</h2>
-        <p>{resume.education}</p>
-      </section>
-
+      {/* Education Section */}
       <section>
-        <h2 className="font-bold text-lg uppercase mb-2">Languages</h2>
-        <p>{resume.languages.join(' • ')}</p>
+        <div className="bg-[#000080] text-white px-3 py-1 text-sm font-bold uppercase mb-4 tracking-widest">
+          Education
+        </div>
+        <div className="p-4 border border-neutral-200 bg-[#fafafa]">
+          <p className="text-sm font-bold italic">{resume.education}</p>
+        </div>
       </section>
     </div>
   );
 }
 
-function parseM3U(text) {
-  const lines = text
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  const parsed = [];
-
-  for (let i = 0; i < lines.length; i += 1) {
-    const line = lines[i];
-
-    if (line.startsWith('#EXTINF:')) {
-      const info = line.split(',')[1] || 'Unknown Artist - Untitled';
-      const nextLine = lines[i + 1];
-
-      if (nextLine && !nextLine.startsWith('#')) {
-        const parts = info.split(' - ');
-        const artist = parts.length > 1 ? parts[0].trim() : 'Matias Menarguez';
-        const title = parts.length > 1 ? parts.slice(1).join(' - ').trim() : info.trim();
-
-        parsed.push({
-          artist,
-          title,
-          src: nextLine,
-        });
-
-        i += 1;
-      }
-    }
-  }
-
-  return parsed;
-}
-
-function Winamp98({ songs }) {
-  const audioRef = useRef(null);
-  const [index, setIndex] = useState(0);
-  const [playing, setPlaying] = useState(false);
-  const [playlistSongs, setPlaylistSongs] = useState(songs);
-  const [playlistStatus, setPlaylistStatus] = useState('Loading playlist...');
-  const current = playlistSongs[index];
-
-  useEffect(() => {
-    let active = true;
-
-    async function loadPlaylist() {
-      try {
-        const response = await fetch(PLAYLIST_URL, { cache: 'no-store' });
-        if (!response.ok) throw new Error('Playlist request failed');
-        const text = await response.text();
-        const parsed = parseM3U(text);
-
-        if (active && parsed.length > 0) {
-          setPlaylistSongs(parsed);
-          setPlaylistStatus('Playlist loaded');
-          setIndex(0);
-        } else if (active) {
-          setPlaylistStatus('playlist.m3u is empty');
-          setPlaylistSongs(songs);
-        }
-      } catch (error) {
-        if (active) {
-          setPlaylistSongs(songs);
-          setPlaylistStatus('Fallback playlist loaded');
-        }
-      }
-    }
-
-    loadPlaylist();
-    return () => {
-      active = false;
-    };
-  }, [songs]);
-
-  useEffect(() => {
-    if (index > Math.max(playlistSongs.length - 1, 0)) {
-      setIndex(0);
-    }
-  }, [playlistSongs, index]);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    if (playing && current?.src) {
-      audioRef.current.play().catch(() => {});
-    } else {
-      audioRef.current.pause();
-    }
-  }, [playing, current]);
-
-  const toggle = () => setPlaying((p) => !p);
-  const prev = () => setIndex((i) => (playlistSongs.length ? (i - 1 + playlistSongs.length) % playlistSongs.length : 0));
-  const next = () => setIndex((i) => (playlistSongs.length ? (i + 1) % playlistSongs.length : 0));
-
+function CertificationsWindow({ certifications }) {
   return (
-    <div className="bg-[#bdbdbd] border border-black p-2 text-black">
-      <audio ref={audioRef} src={current?.src || undefined} onEnded={next} />
-      <div className="bg-black text-[#00ff66] p-2 font-mono text-sm mb-2 min-h-[86px]">
-        <div>*** MATIAMP ***</div>
-        <div className="mt-1">{current?.title || 'No track loaded'}</div>
-        <div className="text-xs opacity-80">{current?.artist || 'Unknown Artist'}</div>
-        <div className="mt-2 text-xs">{current?.src ? (playing ? 'Playing' : 'Paused') : playlistStatus}</div>
-        <div className="text-[10px] opacity-70">{playlistStatus}</div>
-      </div>
-
-      <div className="flex items-center gap-2 mb-3">
-        <Button98 onClick={prev}>◀◀</Button98>
-        <Button98 onClick={toggle}>{playing ? '❚❚' : '▶'}</Button98>
-        <Button98 onClick={next}>▶▶</Button98>
-        <div className="ml-auto text-xs px-2 py-1 bg-white border border-neutral-700">
-          {playlistSongs.length ? `${index + 1}/${playlistSongs.length}` : '0/0'}
-        </div>
-      </div>
-
-      <div className="bg-white border border-neutral-700 h-52 overflow-auto text-sm">
-        {playlistSongs.map((song, i) => (
-          <button
-            key={`${song.title}-${i}`}
-            onClick={() => {
-              setIndex(i);
-              setPlaying(true);
-            }}
-            className={cn(
-              'w-full text-left px-2 py-1 border-b border-neutral-200',
-              i === index ? 'bg-[#000080] text-white' : 'hover:bg-[#dfe8f6]'
+    <div className="bg-white border border-neutral-700 p-4 min-h-[320px] overflow-auto text-sm text-black">
+      <div className="font-bold mb-4 text-lg border-b border-neutral-300 pb-2">Professional Certifications</div>
+      <div className="space-y-4">
+        {certifications.map((cert, i) => (
+          <div key={i} className="border-l-4 border-[#000080] pl-3 py-1">
+            <div className="font-bold text-base">{cert.name}</div>
+            <div className="text-neutral-600">{cert.issuer} | {cert.year}</div>
+            {cert.link && (
+              <a href={cert.link} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline text-xs mt-1 block">
+                Verify Credential
+              </a>
             )}
-          >
-            {String(i + 1).padStart(2, '0')}  {song.artist} - {song.title}
-          </button>
+          </div>
         ))}
+        {certifications.length === 0 && <p className="text-neutral-500 italic">No certifications added yet.</p>}
+      </div>
+      <div className="mt-6 p-3 bg-[#f6f6f6] border border-neutral-400">
+        <div className="font-bold mb-1 italic">Note:</div>
+        <p className="text-xs">All certifications are verified and current. For digital badges, please follow the "Verify Credential" links.</p>
       </div>
     </div>
   );
@@ -562,7 +344,7 @@ function Calculator98() {
 
   return (
     <div className="w-[220px]">
-      <div className="bg-white border border-black text-right px-2 py-2 mb-2 font-mono text-xl h-12 overflow-hidden">{display}</div>
+      <div className="bg-white border border-black text-right px-2 py-2 mb-2 font-mono text-xl h-12 overflow-hidden text-black">{display}</div>
       <div className="grid grid-cols-4 gap-1">
         <Button98 onClick={clear}>C</Button98>
         <Button98 onClick={() => setOperation('+')}>+</Button98>
@@ -1033,10 +815,10 @@ function MyComputerWindow({ onOpen }) {
       description: 'Open my full resume in WordPad.',
     },
     {
-      icon: FolderOpen,
-      label: 'Projects',
-      action: 'projects',
-      description: 'View selected projects and technical work.',
+      icon: Trophy,
+      label: 'Certifications',
+      action: 'certifications',
+      description: 'View professional certifications and badges.',
     },
     {
       icon: HelpCircle,
@@ -1045,10 +827,10 @@ function MyComputerWindow({ onOpen }) {
       description: 'A quick summary of what I bring to a team.',
     },
     {
-  icon: Globe,
-  label: 'Network Status',
-  action: 'network',
-  description: 'See the live hosting and delivery setup.',
+      icon: Globe,
+      label: 'Network Status',
+      action: 'network',
+      description: 'See the live hosting and delivery setup.',
     },
   ];
 
@@ -1057,7 +839,7 @@ function MyComputerWindow({ onOpen }) {
       <div className="font-bold mb-2">My Computer</div>
       <p>Quick access to the most important parts of the portfolio.</p>
 
-      <div className="grid grid-cols-2 gap-3 mt-4">
+      <div className="grid grid-cols-2 gap-3 mt-4 text-black">
         {items.map((item) => {
           const Icon = item.icon;
 
@@ -1081,7 +863,7 @@ function MyComputerWindow({ onOpen }) {
 }
 function WhyHireMeWindow() {
   return (
-    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[280px] overflow-auto">
+    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[280px] overflow-auto text-black">
       <div className="font-bold mb-2">Why hire me?</div>
 
       <p className="mb-3">
@@ -1092,11 +874,10 @@ function WhyHireMeWindow() {
       </p>
 
       <ul className="list-disc pl-5 space-y-1">
-        <li>Practical systems background in enterprise and freelance environments.</li>
-        <li>Comfortable with Linux, Windows Server, basic scripting, IAM, networking, and support workflows.</li>
-        <li>A builder mindset: this portfolio itself is a custom interactive project, not a template.</li>
-        <li>Strong fit for teams that value adaptability, ownership, documentation, and learning speed.</li>
-        <li>Growing cloud and AI interest grounded in real implementation, not hype.</li>
+        <li>Practical systems background in enterprise environments.</li>
+        <li>Comfortable with Linux, Windows Server (NT to 2022), scripting, IAM, and networking.</li>
+        <li>A builder mindset: focused on reliability, security, and maintainability.</li>
+        <li>Strong fit for teams that value adaptability, ownership, and deep technical understanding.</li>
       </ul>
     </div>
   );
@@ -1104,17 +885,16 @@ function WhyHireMeWindow() {
 
 function NetworkStatusWindow() {
   const rows = [
-    ['Hostname', 'matias.is-a.dev'],
-    ['Deployment', 'Cloudflare Pages'],
-    ['Edge Network', 'Cloudflare CDN'],
-    ['Object Storage', 'Cloudflare R2'],
+    ['Hostname', 'winnt-server'],
+    ['Deployment', 'Static Web Hosting'],
+    ['Content Delivery', 'Global Edge Network'],
     ['Source Control', 'GitHub'],
     ['Status', 'Connected'],
-    ['Latency', '~30ms (edge cached)'],
+    ['Latency', '~20ms'],
   ];
 
   return (
-    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[280px] overflow-auto">
+    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[280px] overflow-auto text-black">
       <div className="font-bold mb-2">Network Configuration</div>
 
       <p className="mb-4">
@@ -1146,64 +926,32 @@ function NetworkStatusWindow() {
     </div>
   );
 }
-function ProjectsWindow({ onOpen }) {
-  return (
-    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[280px]">
-      <div className="font-bold mb-2">Projects Folder</div>
-      <p>
-        <a
-  href="#"
-  onClick={(e) => {
-    e.preventDefault();
-    onOpen('rotlt');
-  }}
-  className="text-blue-800 underline hover:text-red-700"
->
-  ROTLT
-</a>
-        – This is an original Point & Click Adventure Game I developed under the alias R4cerX (with some help from AI)
-        in C# + Phyton + Unity. It was created as a free WEB3 game, just for fun. Click "play as guest" to -hopefully- enjoy it.
-        Pixel art was hand drawn in a collaboration with a Spanish artist/friend; story/puzzles/game design and music composing were all done by me.
-      </p>
-
-      <ul className="list-disc pl-5 mt-3 space-y-1">
-        <li>Systems administration case studies</li>
-        <li>Security and compliance project highlights</li>
-        <li>Unity game and technical side projects</li>
-        <li>Music releases and demos</li>
-      </ul>
-    </div>
-  );
-}
 
 function AboutWindow() {
   return (
-    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[220px]">
+    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[220px] text-black">
       <div className="font-bold mb-2">About this portfolio</div>
-      <p>This interactive portfolio recreates a Windows 98 desktop experience around Matias Menarguez's resume. And also denotes my age.</p>
-      <p className="mt-3">Tip: double-click desktop icons, launch MatiAmp, and open Resume.doc.</p>
+      <p>This interactive portfolio recreates a Windows NT Server experience around my professional resume.</p>
+      <p className="mt-3">Tip: Double-click desktop icons or use the Start menu to navigate.</p>
     </div>
   );
 }
 function CloudControlPanel() {
   const rows = [
-    ['Frontend', 'React + Vite single-page app'],
-    ['Hosting model', 'Static deployment optimized for simple maintenance'],
-    ['Audio storage', 'Cloudflare R2 public bucket'],
-    ['Playlist delivery', 'playlist.m3u loaded into MatiAmp at runtime'],
-    ['Game integration', 'ROTLT loaded through an Internet Explorer iframe'],
-    ['Operations mindset', 'Lightweight hosting, low moving parts, easy rollback'],
-    ['Next upgrade', 'Serverless contact endpoint, logging, or monitoring panel'],
+    ['Frontend', 'React + Vite (Static Build)'],
+    ['Hosting model', 'Decentralized Edge Delivery'],
+    ['Asset Storage', 'Local Static Assets (No R2 Dependencies)'],
+    ['Operations mindset', 'Zero-maintenance, high-availability architecture'],
+    ['Security', 'Static delivery with minimal attack surface'],
   ];
 
   return (
-    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[320px] overflow-auto">
-      <div className="font-bold mb-2">System Properties / Cloud Control Panel</div>
+    <div className="text-sm bg-white border border-neutral-700 p-4 min-h-[320px] overflow-auto text-black">
+      <div className="font-bold mb-2">System Properties / Control Panel</div>
 
       <p className="mb-4">
-        This portfolio is intentionally built like a small operational system:
-        static frontend delivery, cloud object storage for music assets, and
-        browser-hosted project demos.
+        This portfolio is built as a fully static application, ensuring maximum compatibility,
+        speed, and security without external cloud storage dependencies.
       </p>
 
       <div className="grid grid-cols-[150px_1fr] border border-neutral-500">
@@ -1228,25 +976,17 @@ function CloudControlPanel() {
           </React.Fragment>
         ))}
       </div>
-
-      <div className="mt-4 border border-neutral-400 bg-[#f6f6f6] p-3">
-        <div className="font-bold mb-1">Why this matters</div>
-        <p>
-          For sysadmin and junior cloud/AI roles, the value here is practical
-          deployment choices, maintainability, asset hosting, and operational thinking.
-        </p>
-      </div>
     </div>
   );
 }
 
 function DosPromptWindow() {
   const [history, setHistory] = useState([
-    'Menarguez(R) Matias Menarguez OS',
-    '(C)Copyright Menarguez Corp 1984-1998.',
+    'Windows NT(R) Server Operating System',
+    'Version 4.0 (Build 1381: Service Pack 6)',
     '',
     'C:\\> help',
-    'Available commands: help, whoami, skills, cloud, ai, projects, contact, systeminfo, ipconfig, ping matias.is-a.dev, aws s3 ls, terraform plan, kubectl get pods, clear',
+    'Available commands: help, whoami, skills, certifications, projects, contact, systeminfo, ipconfig, clear',
   ]);
   const [input, setInput] = useState('');
   const outputRef = useRef(null);
@@ -1265,85 +1005,39 @@ function DosPromptWindow() {
 
   if (command === 'help') {
     lines.push(
-      'Available commands: help, whoami, skills, cloud, ai, projects, contact, systeminfo, ipconfig, ping matias.is-a.dev, aws s3 ls, terraform plan, kubectl get pods, clear'
+      'Available commands: help, whoami, skills, certifications, projects, contact, systeminfo, ipconfig, clear'
     );
   } else if (command === 'whoami') {
-    lines.push('matias.menarguez');
-    lines.push('Role focus: SysAdmin / Cloud Support / Junior AI Engineer');
+    lines.push(`${CONFIG.name.toLowerCase()}.${CONFIG.surname.toLowerCase()}`);
+    lines.push(`Role: ${CONFIG.title}`);
   } else if (command === 'skills') {
-    lines.push(
-      'Linux, Windows Server, Active Directory, IAM, VMware, Hyper-V, Bash, PowerShell, TCP/IP, DNS, DHCP, Oracle, PL/SQL'
-    );
-  } else if (command === 'cloud') {
-    lines.push('Frontend host: static web app');
-    lines.push('Audio storage: Cloudflare R2');
-    lines.push('Playlist delivery: public object storage');
-    lines.push('Deployment mindset: lightweight, edge-friendly, low-maintenance');
-  } else if (command === 'ai') {
-    lines.push(
-      'Current AI focus: practical engineering use-cases, automation, prompt workflows, and building tools with AI assistance.'
-    );
-    lines.push(
-      'ROTLT was developed with Unity/C# plus selective AI-assisted workflow support.'
-    );
+    lines.push(CONFIG.skills.join(', '));
+  } else if (command === 'certifications') {
+    CONFIG.certifications.forEach(c => lines.push(`${c.name} (${c.issuer})`));
   } else if (command === 'projects') {
-    lines.push('ROTLT - Unity/C# point-and-click adventure game');
-    lines.push('Matias Menarguez portfolio OS');
-    lines.push('Freelance IT consulting and systems work');
+    lines.push('Technical projects and infrastructure documentation.');
   } else if (command === 'contact') {
-    lines.push('Email: matumenar@gmail.com');
-    lines.push('LinkedIn: www.linkedin.com/in/matiasmenarguez84');
+    lines.push(`Email: ${CONFIG.email}`);
+    lines.push(`LinkedIn: ${CONFIG.linkedin}`);
   } else if (command === 'systeminfo') {
-    lines.push('Host Name:                 MATIAS');
-    lines.push('OS Name:                   Matias Menarguez OS Portfolio Edition');
-    lines.push('Architecture:              React + Vite');
+    lines.push('Host Name:                 WINNT-SERVER');
+    lines.push('OS Name:                   Windows NT Server');
+    lines.push('Architecture:              React + Vite (Static)');
     lines.push('Frontend Framework:        React');
-    lines.push('Hosting:                   Cloudflare Pages');
-    lines.push('Media Storage:             Cloudflare R2');
-    lines.push('CI/CD:                     GitHub → Cloudflare Deploy');
-    lines.push('Domain:                    matias.is-a.dev');
-    lines.push('Processor(s):              1 Processor Installed');
-    lines.push('Memory:                    4 MB-ish RAM');
+    lines.push('Status:                    Operational');
     } else if (command === 'ipconfig') {
-    lines.push('Matias Menarguez OS IP Configuration');
+    lines.push('Windows NT IP Configuration');
     lines.push('');
     lines.push('Ethernet adapter Portfolio NIC:');
-    lines.push('   IP Address. . . . . . . . . . . : 192.168.98.84');
+    lines.push('   IP Address. . . . . . . . . . . : 10.0.0.1');
     lines.push('   Subnet Mask . . . . . . . . . . : 255.255.255.0');
-    lines.push('   Default Gateway . . . . . . . . : 192.168.98.1');
-    lines.push('   DNS Servers . . . . . . . . . . : 1.1.1.1');
-  } else if (command === 'aws s3 ls') {
-    lines.push('2026-03-10  19:45:00  portfolio-audio-r2');
-    lines.push('2026-03-10  19:45:00  portfolio-static-assets');
-    lines.push('Note: music assets are currently delivered through Cloudflare R2-compatible storage.');
-  } else if (command === 'terraform plan') {
-    lines.push('Refreshing Terraform state in-memory prior to plan...');
-    lines.push('');
-    lines.push('Plan:');
-    lines.push('  + static_site');
-    lines.push('  + object_storage_bucket');
-    lines.push('  + dns_record');
-    lines.push('');
-    lines.push('No destructive changes. Infrastructure posture looks stable.');
-  } else if (command === 'kubectl get pods') {
-    lines.push('NAME                          READY   STATUS    RESTARTS   AGE');
-    lines.push('portfolio-web-7f9c8d          1/1     Running   0          12d');
-    lines.push('prompt-lab-56b4d2             1/1     Running   0          5d');
-    lines.push('metrics-agent-2aa91f          1/1     Running   1          18d');
-    } else if (command === 'ping matias.is-a.dev') {
-    lines.push('Pinging matias.is-a.dev...');
-    lines.push('');
-    lines.push('Reply from Cloudflare Edge: time=28ms');
-    lines.push('Reply from Cloudflare Edge: time=24ms');
-    lines.push('Reply from Cloudflare Edge: time=26ms');
-    lines.push('');
-    lines.push('Connection stable.');
+    lines.push('   Default Gateway . . . . . . . . : 10.0.0.254');
   } else if (command === 'clear') {
     setHistory([]);
     return;
   } else {
-    lines.push(`Bad command or file name: ${raw}`);
-    lines.push('Type HELP for available commands.');
+    lines.push(`'${raw}' is not recognized as an internal or external command,`);
+    lines.push('operable program or batch file.');
   }
 
   setHistory((prev) => [...prev, ...lines]);
@@ -1420,32 +1114,16 @@ Stack dump:
   );
 }
 
-function InternetExplorerWindow() {
-  return (
-    <div className="bg-white border border-neutral-700 h-full flex flex-col overflow-hidden">
-      <div className="bg-[#c0c0c0] border-b border-neutral-600 px-2 py-1 text-xs">
-        Address: https://leetskulls.xyz/games/raiders
-      </div>
-
-      <iframe
-        src="https://leetskulls.xyz/games/raiders"
-        className="flex-1 w-full h-full border-0"
-        title="ROTLT"
-      />
-    </div>
-  );
-}
-
 function StartMenu({ onOpen }) {
   const items = [
     { label: 'Programs', id: null },
     { label: 'Documents', id: 'resume' },
-    { label: 'Music', id: 'winamp' },
+    { label: 'Certifications', id: 'certifications' },
     { label: 'Calculator', id: 'calculator' },
     { label: 'Solitaire', id: 'solitaire' },
     { label: 'Internet Explorer', id: 'internet' },
-    { label: 'MS-DOS', id: 'dos' },
-    { label: 'Cloud Control Panel', id: 'cloud' },
+    { label: 'Command Prompt', id: 'dos' },
+    { label: 'Control Panel', id: 'cloud' },
     { label: 'Network Status', id: 'network' },
     { label: 'About This...', id: 'about' },
     { label: 'Shut Down...', id: 'shutdown' },
@@ -1453,10 +1131,10 @@ function StartMenu({ onOpen }) {
 
   return (
     <div className="absolute bottom-10 left-0 w-[280px] bg-[#c0c0c0] border-t-[2px] border-l-[2px] border-r-[2px] border-b-[2px] border-t-white border-l-white border-r-neutral-700 border-b-neutral-700 shadow-2xl">
-      <div className="flex">
+      <div className="flex text-black text-black">
         <div className="relative w-10 bg-gradient-to-b from-[#808080] to-[#5a5a5a] text-white overflow-hidden">
   <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-90deg] origin-center text-xs font-bold whitespace-nowrap">
-    Matias 98
+    Windows NT Server
   </span>
 </div>
         <div className="flex-1 p-1 text-sm">
@@ -1483,7 +1161,7 @@ function centerWindow(width = 560, height = 320) {
     top: Math.max(20, Math.round((viewportHeight - height) / 2)),
   };
 }
-export default function Windows98ResumePortfolio() {
+export default function WindowsNTServerPortfolio() {
   const [booted, setBooted] = useState(false);
   const [startOpen, setStartOpen] = useState(false);
   const [clock, setClock] = useState('');
@@ -1506,8 +1184,7 @@ export default function Windows98ResumePortfolio() {
   },
 ]);
 const [zTop, setZTop] = useState(30);
-  const songs = useMemo(() => songsSeed, []);
-  const resume = useMemo(() => resumeSeed, []);
+  const resume = useMemo(() => CONFIG, []);
 
   useEffect(() => {
     const updateClock = () => {
@@ -1543,16 +1220,14 @@ const [zTop, setZTop] = useState(30);
 
   const config = {
     resume: { title: 'Resume.doc - WordPad', left: 120, top: 56, width: 860 },
-    winamp: { title: 'MatiAmp', left: 240, top: 110, width: 380 },
+    certifications: { title: 'Certifications', left: 240, top: 110, width: 500 },
     calculator: { title: 'Calculator', left: 380, top: 160, width: 260 },
     solitaire: { title: 'Solitaire', left: 170, top: 72, width: 720 },
     portfolio: { title: 'My Computer', left: 250, top: 104, width: 430 },
-    projects: { title: 'Projects', left: 280, top: 132, width: 460 },
     about: { title: 'About This...', left: 330, top: 170, width: 380 },
     internet: { title: 'Microsoft Internet Explorer', left: 280, top: 150, width: 520 },
-    rotlt: { title: 'Internet Explorer - ROTLT', left: 20, top: 20, width: 1200 },
-    dos: { title: 'MS-DOS Prompt', left: 220, top: 120, width: 620 },
-    cloud: { title: 'System Properties / Cloud Control Panel', left: 260, top: 120, width: 720 },
+    dos: { title: 'Command Prompt', left: 220, top: 120, width: 620 },
+    cloud: { title: 'System Properties / Control Panel', left: 260, top: 120, width: 720 },
     whyhireme: { title: 'Why hire me? - Notepad', left: 260, top: 150, width: 560 },
     network: { title: 'Network Status', left: 280, top: 140, width: 620 },
   }[type];
@@ -1571,7 +1246,7 @@ const [zTop, setZTop] = useState(30);
     width: config.width,
     z: zTop + 1,
     minimized: false,
-    isMaximized: type === 'rotlt',
+    isMaximized: false,
   },
 ]);
 };
@@ -1600,7 +1275,7 @@ const updateWindowPosition = (id, pos) => {
   if (shutdown) {
   return (
     <div className="h-screen w-screen bg-black flex items-center justify-center text-orange-400 font-mono text-2xl">
-      It is now safe to turn off your computer. Looking forward to hearing from you.
+      It is now safe to turn off your server.
     </div>
   );
 }
@@ -1726,27 +1401,25 @@ const updateWindowPosition = (id, pos) => {
                 isMaximized={w.isMaximized}
 >
             {w.type === 'welcome' && (
-              <div className="space-y-4 text-sm">
-                <div className="text-lg font-bold">Welcome to Matias Menarguez OS</div>
-                <p>This interactive portfolio might seem familiar... but no copyright has been infringed -I hope-. </p>
-                <p>Feel free to check my Resume.doc, play some solitaire or ROTLT and listen to some of my music while doing so.</p>
-                <p>You can also launch an MS-DOS prompt to inspect cloud, AI, and systems-oriented commands.</p>
+              <div className="space-y-4 text-sm text-black">
+                <div className="text-lg font-bold">Welcome to Windows NT Server</div>
+                <p>Professional resume and portfolio recreation. </p>
+                <p>Feel free to check my Resume.doc, certifications or projects.</p>
+                <p>You can also launch a Command Prompt to inspect system information.</p>
                 <div className="flex gap-2 flex-wrap">
                   <Button98 onClick={() => openWindow('resume')}>Open Resume.doc</Button98>
-                  <Button98 onClick={() => openWindow('winamp')}>Launch MatiAmp</Button98>
+                  <Button98 onClick={() => openWindow('certifications')}>View Certifications</Button98>
                   <Button98 onClick={() => openWindow('about')}>About this portfolio</Button98>
                 </div>
               </div>
             )}
-            {w.type === 'resume' && <ResumeDoc resume={resume} />}
-            {w.type === 'winamp' && <Winamp98 songs={songs} />}
+            {w.type === 'resume' && <ResumeDoc resume={CONFIG} />}
+            {w.type === 'certifications' && <CertificationsWindow certifications={CONFIG.certifications} />}
             {w.type === 'calculator' && <Calculator98 />}
             {w.type === 'solitaire' && <Solitaire98 />}
             {w.type === 'portfolio' && <MyComputerWindow onOpen={openWindow} />}
-            {w.type === 'projects' && <ProjectsWindow onOpen={openWindow} />}
             {w.type === 'about' && <AboutWindow />}
             {w.type === 'internet' && <InternetExplorerError onClose={() => closeWindow(w.id)} />}
-            {w.type === 'rotlt' && <InternetExplorerWindow />}
             {w.type === 'dos' && <DosPromptWindow />}
             {w.type === 'cloud' && <CloudControlPanel />}
             {w.type === 'whyhireme' && <WhyHireMeWindow />}
@@ -1780,14 +1453,14 @@ const updateWindowPosition = (id, pos) => {
           minimizeWindow(w.id);
         }
       }}
-      className="h-8 min-w-[120px] max-w-[180px] truncate text-left"
+      className="h-8 min-w-[120px] max-w-[180px] truncate text-left text-black"
     >
       {w.title}
     </Button98>
   ))}
 </div>
 
-        <div className="ml-2 h-8 px-3 border-t border-l border-neutral-700 border-r border-b border-white bg-[#c0c0c0] flex items-center gap-2 text-sm">
+        <div className="ml-2 h-8 px-3 border-t border-l border-neutral-700 border-r border-b border-white bg-[#c0c0c0] flex items-center gap-2 text-sm text-black">
           <Volume2 className="w-4 h-4" />
           {clock}
         </div>

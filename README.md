@@ -17,7 +17,7 @@ This project is designed to be fully portable. You don't need to edit complex JS
 
 ## Credits
 
-Original project by **Matias Menarguez**: [win98-portfolio](https://github.com/matumenar84/win98-portfolio)
+This project is a customized, highly automated fork of [matumenar84's win98-portfolio](https://github.com/matumenar84/win98-portfolio), re-engineered for a Windows NT Server aesthetic.
 
 ## Features
 

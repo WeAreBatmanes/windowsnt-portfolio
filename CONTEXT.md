@@ -1,32 +1,31 @@
-# Project Context: winnt-portfolio
+# Project Context: winnt-portfolio (High-Fidelity)
 
-This project is a customized, highly automated fork of [matumenar84's win98-portfolio](https://github.com/matumenar84/win98-portfolio). It has been re-engineered into a **Windows NT Server** themed interactive resume with a focus on data portability and automation.
+This project is a highly automated, high-fidelity fork of [matumenar84's win98-portfolio](https://github.com/matumenar84/win98-portfolio). It has been re-engineered into a **Windows NT Server 4.0** themed interactive resume.
 
-## 🛠 Architecture & Automation
+## 🛠 Architecture & Visual Evolution
 
-### 1. The Magic Setup (`setup.js`)
-The core of this project's portability is the automated setup script. It uses `pdf-parse` to perform "Pattern Matching" on a standard Europass PDF.
-- **Extraction**: It identifies sections like "Work Experience", "Education", and "Skills" by scanning for specific headers in both English and Spanish.
-- **Pattern Recognition**: It uses Regular Expressions to accurately capture dates, emails, and LinkedIn profiles, ensuring that links are correctly formatted and functional.
-- **Configuration**: It automatically generates `src/config.js`, which serves as the single source of truth for the React application.
+### 1. High-Fidelity UI Re-engineering
+The visual layer has been upgraded from a simple pixelated look to a "High-Color" 24-bit aesthetic:
+- **Typography**: Uses Tahoma/Verdana for crisp readability on high-DPI displays.
+- **Borders**: 2px beveled borders with high-contrast shadows for a defined 3D look.
+- **Gradients**: Title bars use the classic NT 4.0 / 2000 Pro gradient (Blue to Azure).
 
-### 2. Structured UI Components
-Unlike the original project which used hardcoded data or simple Markdown, this version uses high-fidelity, structured React components:
-- **`ResumeDoc`**: A complex UI component that renders professional experience, skills, and education in a format reminiscent of Windows NT era technical documents.
-- **`CertificationsWindow`**: A dedicated space for professional badges and credentials.
+### 2. The Magic Setup (`setup.js`)
+The core automation uses `pdf-parse` for data extraction from Europass PDFs:
+- **Extraction**: Scans for "Work Experience", "Education", and "Skills".
+- **Pattern Matching**: Accurate Regex for dates, links, and profile information.
+- **Configuration**: Generates `src/config.js` as the single source of truth.
 
-### 3. Fully Static & Dependency-Free
-- All Cloudflare R2/Pages dependencies have been removed.
-- Assets (PDFs, icons) are served locally from the `public/` and `src/assets/` directories.
-- The project is designed to be hosted anywhere as a static site.
+### 3. Structured UI Components
+- **`ResumeDoc`**: Renders professional experience in a structured, technical document format.
+- **`CertificationsWindow`**: Dedicated space for Credly/Professional badges.
+
+### 4. Fully Static & Portable
+- Assets are local; no external cloud storage dependencies.
+- Deployable as a static site on any provider (Pages, Netlify, Vercel).
 
 ## 📁 Key Files
-- `setup.js`: The automation engine.
-- `src/config.js`: The generated data file (personalized via `npm run setup`).
-- `src/App.jsx`: The main OS simulation and UI logic.
-- `public/cv.pdf`: The required input file for the setup script.
-
-## 🚀 Future Roadmap
-- Integration of more advanced PDF parsing using structured metadata (XML).
-- Support for more CV formats beyond Europass.
-- Expanded "Server Administration" tools in the MS-DOS prompt simulation.
+- `setup.js`: Automation engine.
+- `src/App.jsx`: OS Simulation logic.
+- `src/index.css`: High-fidelity visual styles.
+- `public/cv.pdf`: Required input file.

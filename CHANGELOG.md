@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-03-12
+
+### Added
+- **High-Fidelity Windows NT 4.0 UI**: Enhanced visual resolution and fidelity.
+- **Classic Windows Logo**: Authentic 4-color Microsoft Windows logo on the Start button.
+- **Tahoma Typography**: Replaced pixelated fonts with crisp, anti-aliased Tahoma for a professional "NT Workstation/Server" look.
+- **High-Color Title Bars**: Reintroduced smooth gradients in active window title bars (True Color 24-bit style).
+- **Refined 3D Borders**: Improved 2px beveled borders for all windows and UI elements for better definition on modern displays.
+- **Custom Scrollbars**: Classic Windows-style scrollbars implemented via CSS.
+- **Dynamic Active States**: Windows now visually reflect their focus state (active/inactive) via title bar color shifts.
+
+### Changed
+- **Performance**: Removed modern "framer-motion" animations in favor of instant, snappy UI responses characteristic of the 90s.
+- **Visual Polish**: Updated desktop selection box and icon labels for better contrast and accuracy.
+
 ## [1.0.0] - 2026-03-12
 
 ### Added

@@ -4,10 +4,49 @@ html, body, #root {
   margin: 0;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
-.pixelated {
-  image-rendering: pixelated;
-}
+
 body {
-  cursor: url('/cursor.cur'), default;
+  /* Tahoma es la evolución nítida de MS Sans Serif */
+  font-family: 'Tahoma', 'Verdana', 'Segoe UI', sans-serif;
+  background-color: #008080;
+  color: black;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: default;
+}
+
+/* Quitamos el forzado de pixelación para mayor resolución */
+.pixelated {
+  image-rendering: auto;
+}
+
+/* Scrollbars estilo Windows Clásico */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #dfdfdf;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 1px solid #dfdfdf;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080, 1px 1px 0 #404040;
+}
+
+::-webkit-scrollbar-button {
+  background: #c0c0c0;
+  width: 16px;
+  height: 16px;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080, 1px 1px 0 #404040;
+}
+
+::selection {
+  background-color: #000080;
+  color: white;
 }

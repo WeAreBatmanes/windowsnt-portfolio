@@ -33,12 +33,13 @@ function rectsIntersect(a, b) {
   );
 }
 
-function Button98({ children, className = '', onClick }) {
+function Button98({ children, className = '', onClick, active = false }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        'border-t-[2px] border-l-[2px] border-r-[2px] border-b-[2px] border-t-white border-l-white border-r-neutral-700 border-b-neutral-700 bg-[#c0c0c0] active:border-t-neutral-700 active:border-l-neutral-700 active:border-r-white active:border-b-white px-2 py-1',
+        'border-t-[2px] border-l-[2px] border-r-[2px] border-b-[2px] border-t-white border-l-white border-r-[#404040] border-b-[#404040] shadow-[inset_1px_1px_0_#dfdfdf,inset_-1px_-1px_0_#808080] bg-[#c0c0c0] active:border-t-[#404040] active:border-l-[#404040] active:border-r-white active:border-b-white active:shadow-[inset_1px_1px_0_#808080,inset_-1px_-1px_0_#dfdfdf] px-2 py-1 select-none flex items-center justify-center gap-1 active:translate-x-[0.5px] active:translate-y-[0.5px]',
+        active && 'border-t-[#404040] border-l-[#404040] border-r-white border-b-white shadow-[inset_1px_1px_0_#808080,inset_-1px_-1px_0_#dfdfdf]',
         className,
       )}
     >
@@ -55,10 +56,10 @@ function Button98({ children, className = '', onClick }) {
   onToggleMaximize,
   style,
   zIndex = 10,
-  controls = true,
   onFocus,
   onDrag,
   isMaximized = false,
+  isActive = true,
 }) {
   const [position, setPosition] = useState({
     left: style?.left ?? 0,
@@ -72,19 +73,21 @@ function Button98({ children, className = '', onClick }) {
   });
 
   useEffect(() => {
-    setPosition({
-      left: style?.left ?? 0,
-      top: style?.top ?? 0,
-    });
-  }, [style?.left, style?.top]);
+    if (!isMaximized) {
+      setPosition({
+        left: style?.left ?? position.left,
+        top: style?.top ?? position.top,
+      });
+    }
+  }, [style?.left, style?.top, isMaximized]);
 
   useEffect(() => {
     const handleMove = (e) => {
       if (!dragRef.current.dragging || isMaximized) return;
 
       const nextPos = {
-        left: Math.max(0, e.clientX - dragRef.current.offsetX),
-        top: Math.max(0, e.clientY - dragRef.current.offsetY),
+        left: e.clientX - dragRef.current.offsetX,
+        top: e.clientY - dragRef.current.offsetY,
       };
 
       setPosition(nextPos);
@@ -106,9 +109,8 @@ function Button98({ children, className = '', onClick }) {
 
   const startDrag = (e) => {
     if (isMaximized) return;
-    e.preventDefault();
-    e.stopPropagation();
-
+    if (e.target.closest('.window-controls')) return;
+    
     dragRef.current = {
       dragging: true,
       offsetX: e.clientX - position.left,
@@ -134,82 +136,111 @@ function Button98({ children, className = '', onClick }) {
       };
 
   return (
-    <motion.div
-      initial={{ scale: 0.97, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0.98, opacity: 0 }}
-      transition={{ duration: 0.14 }}
-      className="absolute shadow-xl border-t-[2px] border-l-[2px] border-r-[2px] border-b-[2px] border-t-white border-l-white border-r-neutral-700 border-b-neutral-700 bg-[#c0c0c0] flex flex-col"
+    <div
+      className="absolute bg-[#c0c0c0] border-t-[2px] border-l-[2px] border-r-[2px] border-b-[2px] border-t-white border-l-white border-r-black border-b-black shadow-[inset_1px_1px_0_#dfdfdf,inset_-1px_-1px_0_#808080,1px_1px_0_#404040,-1px_-1px_0_#dfdfdf] p-1 flex flex-col"
       style={windowStyle}
       onMouseDown={() => onFocus?.()}
     >
       <div
-        className={`flex items-center justify-between bg-gradient-to-r from-[#000080] to-[#1084d0] text-white px-2 py-1 select-none ${isMaximized ? 'cursor-default' : 'cursor-move'}`}
+        className={cn(
+          "flex items-center justify-between px-2 py-[3px] select-none mb-1",
+          isActive ? "bg-gradient-to-r from-[#000080] via-[#1084d0] to-[#1084d0]" : "bg-gradient-to-r from-[#808080] to-[#dfdfdf]"
+        )}
         onMouseDown={startDrag}
       >
-        <div className="font-bold text-sm tracking-tight truncate">{title}</div>
-
-        {controls && (
-          <div className="flex gap-1 shrink-0" onMouseDown={(e) => e.stopPropagation()}>
-            <button
-              onClick={onMinimize}
-              className="w-4 h-4 bg-[#c0c0c0] border-t border-l border-white border-r border-b border-black text-black text-[10px] flex items-center justify-center"
-            >
-              _
-            </button>
-
-            <button
-              onClick={onToggleMaximize}
-              className="w-4 h-4 bg-[#c0c0c0] border-t border-l border-white border-r border-b border-black text-black text-[10px] flex items-center justify-center"
-            >
-              {isMaximized ? '❐' : '□'}
-            </button>
-
-            <button
-              onClick={onClose}
-              className="w-4 h-4 bg-[#c0c0c0] border-t border-l border-white border-r border-b border-black text-black text-[10px] leading-none flex items-center justify-center"
-            >
-              ×
-            </button>
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-4 h-4 flex-shrink-0 bg-[#c0c0c0] border border-white/50 shadow-sm flex items-center justify-center">
+             <div className="w-2.5 h-2.5 bg-blue-800" />
           </div>
-        )}
+          <span className="text-white font-bold text-[13px] tracking-tight truncate drop-shadow-sm">
+            {title}
+          </span>
+        </div>
+        <div className="flex gap-[2px] window-controls">
+          {onMinimize && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onMinimize(); }}
+              className="w-4 h-4 bg-[#c0c0c0] border-t border-l border-white border-r border-b-black shadow-[inset_1px_1px_0_#dfdfdf] flex items-center justify-center active:border-t-black active:border-l-black active:border-r-white active:border-b-white active:shadow-none active:translate-x-[0.5px] active:translate-y-[0.5px]"
+            >
+              <div className="w-[6px] h-[2px] bg-black mt-2" />
+            </button>
+          )}
+          {onToggleMaximize && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleMaximize(); }}
+              className="w-4 h-4 bg-[#c0c0c0] border-t border-l border-white border-r border-b-black shadow-[inset_1px_1px_0_#dfdfdf] flex items-center justify-center active:border-t-black active:border-l-black active:border-r-white active:border-b-white active:shadow-none active:translate-x-[0.5px] active:translate-y-[0.5px]"
+            >
+              <div className="w-[8px] h-[8px] border-[1px] border-black border-t-[2px]" />
+            </button>
+          )}
+          {onClose && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onClose(); }}
+              className="w-4 h-4 bg-[#c0c0c0] border-t border-l border-white border-r border-b-black shadow-[inset_1px_1px_0_#dfdfdf] flex items-center justify-center active:border-t-black active:border-l-black active:border-r-white active:border-b-white active:shadow-none active:translate-x-[0.5px] active:translate-y-[0.5px]"
+            >
+              <span className="text-black font-bold text-xs leading-none">×</span>
+            </button>
+          )}
+        </div>
       </div>
-
-      <div className="p-2 flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 overflow-auto bg-[#c0c0c0] p-4 text-black text-[13px] leading-relaxed">
         {children}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
+const WindowsLogo = () => (
+  <div className="grid grid-cols-2 grid-rows-2 gap-[1px] w-[14px] h-[14px] rotate-[-2deg]">
+    <div className="bg-[#ff4b00]" />
+    <div className="bg-[#00c500]" />
+    <div className="bg-[#00a6f3]" />
+    <div className="bg-[#ffb400]" />
+  </div>
+);
+
 function BootScreen({ onComplete }) {
   useEffect(() => {
-    const t = setTimeout(onComplete, 3000);
+    const t = setTimeout(onComplete, 3500);
     return () => clearTimeout(t);
   }, [onComplete]);
 
   return (
-    <div className="h-screen w-screen bg-black text-white flex flex-col items-center justify-center font-mono">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-[720px] max-w-[92vw]">
-        <div className="text-5xl font-bold tracking-tight mb-4">
-          <span className="text-blue-600">Windows</span>
-          <span className="ml-4 text-white">NT Server</span>
+    <div className="h-screen w-screen bg-[#000000] text-white flex flex-col items-center justify-center font-serif select-none">
+      <div className="w-[600px] max-w-[95vw] border-2 border-[#808080] p-8 bg-[#000000] shadow-[4px_4px_0_#404040]">
+        <div className="flex items-center justify-between mb-12">
+          <div className="flex flex-col">
+            <span className="text-5xl font-bold tracking-tighter leading-none italic">Windows <span className="text-blue-500">NT</span></span>
+            <span className="text-xl tracking-[0.2em] font-light mt-1 uppercase">Server</span>
+          </div>
+          <div className="text-right text-xs opacity-70 italic font-sans">
+            Version 4.0<br />
+            Built on NT Technology
+          </div>
         </div>
-        <div className="border border-neutral-500 p-1 bg-black">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '100%' }}
-            transition={{ duration: 2.6, ease: 'linear' }}
-            className="h-5 bg-gradient-to-r from-[#000080] via-[#1084d0] to-[#54c7ff]"
-          />
+        
+        <div className="space-y-2 font-sans text-sm">
+          <div className="flex justify-between items-center h-6 border border-[#404040] p-[2px]">
+             <motion.div 
+               initial={{ width: 0 }}
+               animate={{ width: "100%" }}
+               transition={{ duration: 3, ease: "linear" }}
+               className="h-full bg-blue-700 shadow-[0_0_10px_rgba(0,0,255,0.5)]"
+             />
+          </div>
+          <div className="flex justify-between text-[10px] uppercase tracking-widest opacity-50 px-1">
+            <span>Initializing...</span>
+            <span>Please wait</span>
+          </div>
         </div>
-        <div className="mt-8 text-sm text-neutral-300 leading-6">
-          <div>Starting Windows NT Server…</div>
-          <div>Loading kernel and system modules…</div>
-          <div>Initializing Network Configuration…</div>
-          <div>Mounting File Systems…</div>
+
+        <div className="mt-12 flex justify-center">
+           <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#808080] to-transparent opacity-20" />
         </div>
-      </motion.div>
+      </div>
+      <div className="absolute bottom-8 text-[10px] opacity-30 font-sans tracking-widest uppercase">
+        © 1985-1996 Microsoft Corporation
+      </div>
     </div>
   );
 }
@@ -1116,38 +1147,39 @@ Stack dump:
 
 function StartMenu({ onOpen }) {
   const items = [
-    { label: 'Programs', id: null },
-    { label: 'Documents', id: 'resume' },
-    { label: 'Certifications', id: 'certifications' },
-    { label: 'Calculator', id: 'calculator' },
-    { label: 'Solitaire', id: 'solitaire' },
-    { label: 'Internet Explorer', id: 'internet' },
-    { label: 'Command Prompt', id: 'dos' },
-    { label: 'Control Panel', id: 'cloud' },
-    { label: 'Network Status', id: 'network' },
-    { label: 'About This...', id: 'about' },
-    { label: 'Shut Down...', id: 'shutdown' },
+    { label: 'Programs', id: null, icon: '📁' },
+    { label: 'Documents', id: 'resume', icon: '📄' },
+    { label: 'Certifications', id: 'certifications', icon: '☁️' },
+    { label: 'Calculator', id: 'calculator', icon: '🧮' },
+    { label: 'Solitaire', id: 'solitaire', icon: '🃏' },
+    { label: 'Internet Explorer', id: 'internet', icon: '🌐' },
+    { label: 'Command Prompt', id: 'dos', icon: '💻' },
+    { label: 'Control Panel', id: 'cloud', icon: '⚙️' },
+    { label: 'Network Status', id: 'network', icon: '🔌' },
+    { label: 'About This...', id: 'about', icon: 'ℹ️' },
+    { label: 'Shut Down...', id: 'shutdown', icon: '🚪' },
   ];
 
   return (
-    <div className="absolute bottom-10 left-0 w-[280px] bg-[#c0c0c0] border-t-[2px] border-l-[2px] border-r-[2px] border-b-[2px] border-t-white border-l-white border-r-neutral-700 border-b-neutral-700 shadow-2xl">
-      <div className="flex text-black text-black">
-        <div className="relative w-10 bg-gradient-to-b from-[#808080] to-[#5a5a5a] text-white overflow-hidden">
-  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-90deg] origin-center text-xs font-bold whitespace-nowrap">
-    Windows NT Server
-  </span>
-</div>
-        <div className="flex-1 p-1 text-sm">
-          {items.map(({ label, id }) => (
+    <div className="absolute bottom-[2px] left-0 w-[240px] bg-[#c0c0c0] border-t-[1px] border-l-[1px] border-r-[1px] border-b-[1px] border-t-white border-l-white border-r-black border-b-black shadow-[1px_1px_0_#404040,inset_1px_1px_0_#dfdfdf,inset_-1px_-1px_0_#808080] z-[60] flex">
+      <div className="w-6 bg-[#808080] flex items-end justify-center pb-2 overflow-hidden border-r border-[#dfdfdf]">
+        <span className="rotate-[-90deg] origin-center text-white font-bold text-lg tracking-widest whitespace-nowrap select-none opacity-50">
+          Windows<span className="font-normal ml-1 text-sm italic">NT Server</span>
+        </span>
+      </div>
+      <div className="flex-1 py-1">
+        {items.map(({ label, id, icon }) => (
+          <div key={label}>
+            {label === 'Shut Down...' && <div className="h-[1px] bg-[#808080] border-b border-white my-1 mx-1" />}
             <button
-              key={label}
               onClick={() => id && onOpen(id)}
-              className="w-full text-left px-3 py-2 hover:bg-[#000080] hover:text-white"
+              className="w-full text-left px-2 py-1 flex items-center gap-2 hover:bg-[#000080] hover:text-white group"
             >
-              {label}
+              <span className="w-5 h-5 flex items-center justify-center text-lg">{icon}</span>
+              <span className="text-xs font-medium">{label}</span>
             </button>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -1335,55 +1367,56 @@ const updateWindowPosition = (id, pos) => {
   }}
 >
       <div className="absolute inset-0 z-10">
-   {desktopIcons.map((item) => {
-    {selectionBox && (
-  <div
-    className="absolute border border-[#000080] bg-[#0000ff]/20 pointer-events-none"
-    style={{
-      left: selectionBox.left,
-      top: selectionBox.top,
-      width: selectionBox.width,
-      height: selectionBox.height,
-    }}
-  />
-)}
-  return (
-    <button
-  key={item.id}
-  className="absolute flex flex-col items-center w-24 text-white text-xs"
-  style={{ left: item.x, top: item.y }}
-  onClick={(e) => {
-    e.stopPropagation();
-    setSelectedIcon(item.id);
-  }}
-  onDoubleClick={(e) => {
-    e.stopPropagation();
-    openWindow(item.id)
-    ;
-    
-  }}
->
-      <div className="w-8 h-8 flex items-center justify-center mb-1 overflow-visible">
-  <img
-    src={item.icon}
-    alt={item.label}
-    className="w-8 h-8 pixelated drop-shadow"
-    draggable="false"
-    style={{ transform: `scale(${item.scale || 1})` }}
-  />
-</div>
-      <span
-  className={`px-1 text-center ${
-    selectedIcon === item.id
-      ? "bg-[#000080] text-white"
-      : "bg-transparent"
-  }`}
->
-        {item.label}
-      </span>
-    </button>
-  );
-})}
+        {selectionBox && (
+          <div
+            className="absolute border border-[#000080] bg-[#0000ff]/20 pointer-events-none z-[100]"
+            style={{
+              left: selectionBox.left,
+              top: selectionBox.top,
+              width: selectionBox.width,
+              height: selectionBox.height,
+            }}
+          />
+        )}
+        {desktopIcons.map((item) => (
+          <button
+            key={item.id}
+            className="absolute flex flex-col items-center w-24 text-white text-xs z-20 group"
+            style={{ left: item.x, top: item.y }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedIcon(item.id);
+            }}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              openWindow(item.id);
+            }}
+          >
+            <div className="w-8 h-8 flex items-center justify-center mb-1 overflow-visible relative">
+              <img
+                src={item.icon}
+                alt={item.label}
+                className={cn(
+                  "w-8 h-8 pixelated",
+                  selectedIcon === item.id ? "brightness-75 contrast-125" : ""
+                )}
+                draggable="false"
+                style={{ transform: `scale(${item.scale || 1})` }}
+              />
+              {selectedIcon === item.id && (
+                <div className="absolute inset-0 bg-[#000080] mix-blend-color opacity-30 pointer-events-none" />
+              )}
+            </div>
+            <span
+              className={cn(
+                "px-1 text-center select-none mt-1",
+                selectedIcon === item.id ? "bg-[#000080] text-white outline-[1px] outline-dotted outline-white/50" : "bg-transparent"
+              )}
+            >
+              {item.label}
+            </span>
+          </button>
+        ))}
       </div>
 
       <AnimatePresence>
@@ -1399,6 +1432,7 @@ const updateWindowPosition = (id, pos) => {
                 onDrag={(pos) => updateWindowPosition(w.id, pos)}
                 style={{ left: w.left, top: w.top, width: w.width || 560 }}
                 isMaximized={w.isMaximized}
+                isActive={w.z === zTop}
 >
             {w.type === 'welcome' && (
               <div className="space-y-4 text-sm text-black">
@@ -1428,40 +1462,48 @@ const updateWindowPosition = (id, pos) => {
         ))}
       </AnimatePresence>
 
-      <div className="absolute bottom-0 left-0 right-0 h-10 bg-[#c0c0c0] border-t-[2px] border-t-white z-50 flex items-center px-1">
-        <div className="relative" onClick={(e) => e.stopPropagation()}>
-          <Button98 onClick={() => setStartOpen((s) => !s)} className="h-8 min-w-[90px] font-bold flex items-center gap-2">
-            <div className="w-4 h-4 bg-[#1084d0] rounded-sm" />
-            Start
+      <div className="absolute bottom-0 left-0 right-0 h-10 bg-[#c0c0c0] border-t-[1px] border-t-white shadow-[inset_0_1px_0_#dfdfdf,0_-1px_0_#808080] z-50 flex items-center px-[2px] py-[2px] gap-1 select-none">
+        <div className="relative h-full flex items-center" onClick={(e) => e.stopPropagation()}>
+          <Button98 
+            onClick={() => setStartOpen((s) => !s)} 
+            active={startOpen}
+            className="h-[30px] px-2 font-bold flex items-center gap-1.5 min-w-[80px]"
+          >
+            <WindowsLogo />
+            <span className="text-[13px] tracking-tight">Start</span>
           </Button98>
           {startOpen && <StartMenu onOpen={openWindow} />}
         </div>
 
-        <div className="ml-2 flex-1 h-8 flex items-center gap-1 overflow-hidden">
-  {windows.map((w) => (
-    <Button98
-      key={w.id}
-      onClick={() => {
-        if (w.minimized) {
-          setWindows((prev) =>
-            prev.map((item) =>
-              item.id === w.id ? { ...item, minimized: false } : item
-            )
-          );
-          bringToFront(w.id);
-        } else {
-          minimizeWindow(w.id);
-        }
-      }}
-      className="h-8 min-w-[120px] max-w-[180px] truncate text-left text-black"
-    >
-      {w.title}
-    </Button98>
-  ))}
-</div>
+        <div className="flex-1 h-full flex items-center gap-1 overflow-hidden">
+          {windows.map((w) => (
+            <Button98
+              key={w.id}
+              active={w.z === zTop && !w.minimized}
+              onClick={() => {
+                if (w.minimized) {
+                  setWindows((prev) =>
+                    prev.map((item) =>
+                      item.id === w.id ? { ...item, minimized: false } : item
+                    )
+                  );
+                  bringToFront(w.id);
+                } else if (w.z === zTop) {
+                  minimizeWindow(w.id);
+                } else {
+                  bringToFront(w.id);
+                }
+              }}
+              className="h-[28px] min-w-[80px] max-w-[160px] truncate text-left px-1 flex justify-start gap-1"
+            >
+              <div className="w-4 h-4 flex-shrink-0 bg-blue-800 border border-white/20" />
+              <span className="text-xs truncate">{w.title}</span>
+            </Button98>
+          ))}
+        </div>
 
-        <div className="ml-2 h-8 px-3 border-t border-l border-neutral-700 border-r border-b border-white bg-[#c0c0c0] flex items-center gap-2 text-sm text-black">
-          <Volume2 className="w-4 h-4" />
+        <div className="h-[28px] px-2 border-t border-l border-[#808080] border-r border-b border-white shadow-[inset_1px_1px_0_#404040,inset_-1px_-1px_0_#dfdfdf] flex items-center gap-2 text-[11px] text-black bg-[#c0c0c0]">
+          <Volume2 className="w-3 h-3 opacity-70" />
           {clock}
         </div>
       </div>

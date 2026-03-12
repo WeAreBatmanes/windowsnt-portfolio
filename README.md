@@ -1,6 +1,6 @@
-# Windows NT Server Interactive Portfolio
+# Windows NT Server Interactive Portfolio (High-Fidelity)
 
-A retro Windows NT Server inspired interactive resume built with React. This is a highly automated, portable portfolio designed for IT professionals and systems administrators.
+A professional, high-fidelity Windows NT Server 4.0 inspired interactive resume built with React. This is a highly automated, portable portfolio designed for IT professionals and systems administrators who appreciate the classic "server room" aesthetic.
 
 ## 🚀 Magic Setup (The 2-Step Deployment)
 
@@ -17,16 +17,17 @@ This project is designed to be fully portable. You don't need to edit complex JS
 
 ## Credits
 
-This project is a customized, highly automated fork of [matumenar84's win98-portfolio](https://github.com/matumenar84/win98-portfolio), re-engineered for a Windows NT Server aesthetic.
+This project is a customized, highly automated fork of [matumenar84's win98-portfolio](https://github.com/matumenar84/win98-portfolio), re-engineered for a high-fidelity **Windows NT Server 4.0** aesthetic.
 
 ## Features
 
-- **Windows NT Server Interface**: A professional, retro server aesthetic.
+- **High-Fidelity NT 4.0 Interface**: Professional "High-Color" UI with Tahoma typography, 3D beveled borders, and smooth gradients.
+- **Authentic Start Menu**: Featuring the classic 4-color Windows logo and NT-style vertical branding.
 - **Universal Europass Parser**: Automated data extraction from standard Europass PDFs.
-- **Structured Resume Window**: A high-fidelity "Resume.doc" experience based on your actual data.
+- **Structured Resume Window**: A crisp "Resume.doc" experience based on your actual data.
 - **Certification Badges**: Automated extraction and display of your professional credentials.
-- **Fully Static**: Zero external cloud dependencies (no Cloudflare R2 required).
-- **Interactive Apps**: Play Solitaire or use the Command Prompt while browsing the resume.
+- **Retro Boot Experience**: Authentic Windows NT Server 4.0 boot sequence.
+- **Fully Static**: Zero external cloud dependencies, optimized for Cloudflare Pages.
 
 ## Local Development
 
@@ -38,27 +39,7 @@ npm run dev
 
 This portfolio is built with Vite and is ready to be hosted on **Cloudflare Pages**.
 
-### Option 1: Automatic Deployment (Recommended)
-1.  Push your code to **GitHub**.
-2.  Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
-3.  Go to **Workers & Pages** > **Create application** > **Pages** > **Connect to Git**.
-4.  Select your repository and use the following build settings:
-    - **Framework preset**: `Vite`
-    - **Build command**: `npm run setup && npm run build`
-    - **Build output directory**: `dist`
-5.  Click **Save and Deploy**.
-
-### Option 2: Manual Deployment (CLI)
-If you prefer the command line, use [Wrangler](https://developers.cloudflare.com/workers/wrangler/):
-```bash
-# Run setup and build locally
-npm run setup
-npm run build
-
-# Deploy to Cloudflare
-npx wrangler pages deploy dist
-```
-
-## Customization
-
-After running `npm run setup`, you can fine-tune your details in `src/config.js` (e.g., adding your nickname or specific Credly links).
+### Build Settings:
+- **Framework preset**: `Vite`
+- **Build command**: `npm run setup && npm run build`
+- **Build output directory**: `dist`

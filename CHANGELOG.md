@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-03-13
+
+### Added
+- **Interactive Europass Scraper**: Replaced the static PDF parser with a robust, interactive `setup.js` powered by `cheerio`.
+- **Smart Setup**: The configuration script now remembers previous settings (Name, Nickname, LinkedIn, Credly) and uses them as defaults.
+- **Enhanced UI Integration**: Direct links to **Europass Profile**, **LinkedIn**, and **Credly** are now rendered in the `ResumeDoc` header.
+- **Dynamic Content Support**: Improved extraction of work experience bullets and professional summaries directly from the Europass HTML structure.
+- **Conditional Rendering**: UI elements (emails, certification links) now hide automatically if the data is not provided in `config.js`.
+
+### Changed
+- **Setup Workflow**: Moved from a PDF-based approach to a URL-based scraping method for better data consistency and lower user friction.
+- **Deployment Process**: Simplified Cloudflare Pages build command to `npm run build`, emphasizing the importance of local setup before deployment.
+
+## [1.3.0] - 2026-03-12
+
+### Added
+- **Visual Identity**: Replaced default Vite favicon with an authentic 4-color Windows logo SVG to match the Start button.
+
+## [1.2.0] - 2026-03-12
+
+### Changed
+- **UX Polish**: Custom CV download filename for better professional identification (`Matias_Carlos_Siri_Brenta_CV-EUROPASS.pdf`).
+- **Performance**: Optimized boot sequence speed (reduced from 3.5s to 2s) for faster access while maintaining the retro aesthetic.
+
 ## [1.1.0] - 2026-03-12
 
 ### Added

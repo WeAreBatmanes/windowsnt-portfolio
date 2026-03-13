@@ -201,7 +201,7 @@ const WindowsLogo = () => (
 
 function BootScreen({ onComplete }) {
   useEffect(() => {
-    const t = setTimeout(onComplete, 3500);
+    const t = setTimeout(onComplete, 2000);
     return () => clearTimeout(t);
   }, [onComplete]);
 
@@ -218,16 +218,15 @@ function BootScreen({ onComplete }) {
             Built on NT Technology
           </div>
         </div>
-        
+
         <div className="space-y-2 font-sans text-sm">
           <div className="flex justify-between items-center h-6 border border-[#404040] p-[2px]">
-             <motion.div 
+             <motion.div
                initial={{ width: 0 }}
                animate={{ width: "100%" }}
-               transition={{ duration: 3, ease: "linear" }}
+               transition={{ duration: 1.5, ease: "linear" }}
                className="h-full bg-blue-700 shadow-[0_0_10px_rgba(0,0,255,0.5)]"
-             />
-          </div>
+             />          </div>
           <div className="flex justify-between text-[10px] uppercase tracking-widest opacity-50 px-1">
             <span>Initializing...</span>
             <span>Please wait</span>
@@ -250,16 +249,36 @@ function ResumeDoc({ resume }) {
     <div className="bg-white border border-black h-[70vh] text-black p-8 shadow-inner overflow-auto font-sans">
       {/* Header */}
       <div className="text-center border-b-2 border-black pb-6 mb-8">
-        <h1 className="text-4xl font-bold tracking-tighter uppercase">{resume.name} "{resume.nickname}" {resume.surname}</h1>
+        <h1 className="text-4xl font-bold tracking-tighter uppercase">
+          {resume.name} {resume.nickname ? `"${resume.nickname}"` : ''} {resume.surname}
+        </h1>
         <p className="text-lg font-bold text-neutral-700 mt-1">{resume.title}</p>
-        <div className="flex justify-center gap-4 mt-3 text-sm">
-          <span>{resume.email}</span>
-          <span className="text-neutral-300">|</span>
-          <a href={resume.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline font-bold">LinkedIn Profile</a>
-          <span className="text-neutral-300">|</span>
-          <a href={resume.certifications[0]?.link} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline font-bold">Certification Badges</a>
-          <span className="text-neutral-300">|</span>
-          <a href={resume.cvPath} download className="text-blue-800 underline font-bold">Download PDF</a>
+        <div className="flex justify-center flex-wrap gap-4 mt-3 text-sm">
+          {resume.email && (
+            <>
+              <span>{resume.email}</span>
+              <span className="text-neutral-300">|</span>
+            </>
+          )}
+          {resume.linkedin && (
+            <>
+              <a href={resume.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline font-bold">LinkedIn Profile</a>
+              <span className="text-neutral-300">|</span>
+            </>
+          )}
+          {resume.credly && (
+            <>
+              <a href={resume.credly} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline font-bold">Certification Badges</a>
+              <span className="text-neutral-300">|</span>
+            </>
+          )}
+          {resume.europassUrl && (
+            <>
+              <a href={resume.europassUrl} target="_blank" rel="noopener noreferrer" className="text-blue-800 underline font-bold">Europass Profile</a>
+              <span className="text-neutral-300">|</span>
+            </>
+          )}
+          <a href={resume.cvPath} download="CV-Portfolio.pdf" className="text-blue-800 underline font-bold">Download PDF</a>
         </div>
       </div>
 
@@ -1048,8 +1067,8 @@ function DosPromptWindow() {
   } else if (command === 'projects') {
     lines.push('Technical projects and infrastructure documentation.');
   } else if (command === 'contact') {
-    lines.push(`Email: ${CONFIG.email}`);
-    lines.push(`LinkedIn: ${CONFIG.linkedin}`);
+    if (CONFIG.email) lines.push(`Email: ${CONFIG.email}`);
+    if (CONFIG.linkedin) lines.push(`LinkedIn: ${CONFIG.linkedin}`);
   } else if (command === 'systeminfo') {
     lines.push('Host Name:                 WINNT-SERVER');
     lines.push('OS Name:                   Windows NT Server');
